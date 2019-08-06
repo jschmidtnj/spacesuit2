@@ -1,0 +1,6 @@
+# ignore platformio files
+.pio
+.pioenvs
+.piolibdeps
+.vscode/
+include/config.h
