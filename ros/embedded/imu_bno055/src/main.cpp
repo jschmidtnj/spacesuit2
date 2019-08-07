@@ -17,7 +17,9 @@
 #include "WiFi.h"
 #include "ping.h"
 #include "stdio.h"
-#include "queue.h"
+#include "deque.h"
+#include "vector.h"
+#include "covariance.h"
 #include "config.h"
 
 #define DBG_OUTPUT_PORT Serial
@@ -41,13 +43,16 @@ unsigned long lastTrigger = 0;
 sensor_msgs::Imu imuMessage;
 geometry_msgs::Quaternion orientation;
 std_msgs::Float64 orientationCovarience[9];
-Queue<float[3]> orientationHistory(HISTORY_SIZE);
+vector<float> orientationVector(3);
+deque<vector<float> > orientationHistory(HISTORY_SIZE);
 geometry_msgs::Vector3 angularVelocity;
 std_msgs::Float64 angularVelocityCovarience[9];
-Queue<float[3]> angularVelocityHistory(HISTORY_SIZE);
+vector<float> angularVelocityVector(3);
+deque<vector<float> > angularVelocityHistory(HISTORY_SIZE);
 geometry_msgs::Vector3 linearAccel;
 std_msgs::Float64 linearAccelCovarience[9];
-Queue<float[3]> linearAccelHistory(HISTORY_SIZE);
+vector<float> linearAccelVector(3);
+deque<vector<float> > linearAccelHistory(HISTORY_SIZE);
 ros::Publisher imuPublisher(imuTopic, &imuMessage);
 std_msgs::String chat_msg;
 ros::Publisher chatter(chatTopic, &chat_msg);
@@ -62,7 +67,6 @@ public:
 
   void init()
   {
-    // do your initialization here. this probably includes TCP server/client setup
     while (!client.connect(rosIPAddress, rosPort))
     {
       if (debug_mode)
@@ -74,15 +78,12 @@ public:
   // read a byte from the serial port. -1 = failure
   int read()
   {
-    // implement this method so that it reads a byte from the TCP connection and returns it
-    //  you may return -1 is there is an error; for example if the TCP connection is not open
-    return client.read(); //will return -1 when it will works
+    return client.read();
   }
 
   // write data to the connection to ROS
   void write(uint8_t *data, int length)
   {
-    // implement this so that it takes the arguments and writes or prints them to the TCP connection
     for (int i = 0; i < length; i++)
       client.write(data[i]);
   }
@@ -189,13 +190,12 @@ float covariance(Queue<float[3][3]> q1, float arr2[], int index, int count)
 
 void getIMUData()
 {
-  sensors_event_t event; 
-  IMU.getEvent(&event);
+  // sensors_event_t event; 
+  // IMU.getEvent(&event);
   imu::Quaternion orientation_quat = IMU.getQuat();
   imu::Vector<3> linear_accel_vector = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
   imu::Vector<3> angular_velocity_vector = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
   imuMessage.header.stamp = current_time;
-  // DBG_OUTPUT_PORT.println(a.acceleration.x);
   //update data
   linearAccel.x = linear_accel_vector.x();
   linearAccel.y = linear_accel_vector.y();
@@ -207,18 +207,15 @@ void getIMUData()
   orientation.x = quat.x();
   orientation.y = quat.y();
   orientation.z = quat.z();
-  linearAccelHistory.push(&linearAccel);
-  angularVelocityHistory.push(&angularVelocity);
-  orientationHistory.push(&orientation);
-  for (int i = 0; i < 3; i++)
-  {
-    for (int j = 0; j < 3; j++)
-    {
-      linearAccelCovarience[3 * i + j].data = 0.0;
-      angularVelocityCovarience[3 * i + j].data = 0.0;
-      orientationCovarience[3 * i + j].data = covariance(orientationHistory, orientationHistory.count());
-    }
-  }
+  orientationVector[0] = orientation.x;
+  orientationVector[1] = orientation.y;
+  orientationVector[2] = orientation.z;
+  linearAccelHistory.push_front(linearAccelVector);
+  angularVelocityHistory.push_front(angularVelocityVector);
+  orientationHistory.push_front(orientationVector);
+  linearAccelCovarience = covariance(linearAccelHistory);
+  angularVelocityCovarience = covariance(angularVelocityHistory);
+  orientationCovarience = covariance(orientationHistory);
   imuMessage.linear_acceleration = linearAccel;
   imuMessage.orientation = orientation;
   imuMessage.angular_velocity = angularVelocity;

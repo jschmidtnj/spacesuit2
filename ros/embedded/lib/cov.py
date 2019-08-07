@@ -24,4 +24,3 @@ for i in range(len(transposed)):
       result[i][j] += transposed[i][k] * a[k][j] / float(len(a) - 1)
 print(result)
 # https://stackoverflow.com/questions/26444525/how-do-i-calculate-the-covariance-matrix-without-any-built-in-functions-or-loops
-
