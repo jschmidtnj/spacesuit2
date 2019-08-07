@@ -2,7 +2,6 @@
 .pio
 .pioenvs
 .piolibdeps
-.vscode/
 include/config.h
 
 # ignore c++ files

@@ -49,6 +49,19 @@ add_custom_target(maps ALL COMMAND make
 ################################################################################
 # Install
 ################################################################################
+catkin_install_python(PROGRAMS bin/spacesuit_data_storage
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+catkin_install_python(PROGRAMS bin/spacesuit_data_collector
+                      DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY launch
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(DIRECTORY scripts
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        USE_SOURCE_PERMISSIONS)
+
 ################################################################################
 # Test
 ################################################################################
