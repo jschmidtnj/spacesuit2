@@ -1,0 +1,8 @@
+<launch>
+  <arg name="SUIT_NAME" default="spacesuit1" />
+  <arg name="CONNECTION_URI" default="" />
+  <node pkg="spacesuit_cloud" type="spacesuit_data_storage" name="kale_bot_data_storage" output="screen">
+    <param name="suit_name" value="$(arg SUIT_NAME)" />
+    <param name="connection_uri" value="$(arg CONNECTION_URI)" />
+  </node>
+</launch>

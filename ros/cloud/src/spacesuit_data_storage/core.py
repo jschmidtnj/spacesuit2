@@ -13,8 +13,11 @@ from pymongo import MongoClient
 class DataCollector(object):
 
     def __init__(self):
-        connection_uri = rospy.get_param('~config_path')
+        connection_uri = rospy.get_param('~connection_uri')
+        if len(connection_uri) == 0:
+            raise RuntimeError("no connection uri provided")
         client = MongoClient(connection_uri)
+        self.suit_name = rospy.get_param('~suit_name')
         self.db = client.sensor_data
         # Subscribe to topics and register call backs
         for topic in config.topics_list:
@@ -26,5 +29,5 @@ class DataCollector(object):
         json_data = {
             'data': data
         }
-        result = self.db[config.db_index][topic_name].insert_one(json_data)
+        result = self.db[config.db_index][self.suit_name][topic_name].insert_one(json_data)
         rospy.loginfo('added {} to index {}'.format(result.inserted_id, config.db_index))

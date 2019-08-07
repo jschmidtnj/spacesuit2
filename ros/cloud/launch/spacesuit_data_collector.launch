@@ -1,0 +1,10 @@
+<launch>
+  <arg name="DATA_PATH" default="$(env HOME)" />
+  <arg name="MESSAGE" default="-" />
+  <arg name="CONFIG_PATH" default="$(find spacesuit_cloud)/params/data_collection/spacesuit1.yaml" />
+  <node pkg="spacesuit_cloud" type="spacesuit_data_collector" name="kale_bot_data_collector" output="screen">
+    <param name="message" value="$(arg MESSAGE)" />
+    <param name="config_path" value="$(arg CONFIG_PATH)" />
+    <param name="data_path" value="$(arg DATA_PATH)" />
+  </node>
+</launch>

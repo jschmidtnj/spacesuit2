@@ -33,7 +33,7 @@ def get_user_dir():
     data_path = rospy.get_param('~data_path')
     with open(config_path, 'r') as f:
         meta_data = yaml.safe_load(f)
-    return data_path + '/data/' + meta_data["rover_name"] + '/'
+    return data_path + '/data/' + meta_data["name"] + '/'
 
 
 def save_meta_data(path, start_time, time_formatted):
@@ -42,7 +42,7 @@ def save_meta_data(path, start_time, time_formatted):
     msg = rospy.get_param('~message')
     with open(config_path, 'r') as f:
         yaml_data = yaml.safe_load(f)
-    meta_data = {'rover_name': yaml_data["rover_name"], 'message': msg, 'record_location': yaml_data["location"], 'robot_type': yaml_data["robot_type"],
-                 'record_campus': yaml_data["campus"], 'record_date': get_date(), 'record_start_time': time_formatted, 'record_total_time': str(record_time)}
+    meta_data = {'name': yaml_data["name"], 'message': msg, 'location': yaml_data["location"], 'type': yaml_data["type"],
+                 'date': get_date(), 'start_time': time_formatted, 'total_time': str(record_time)}
     with open(path + 'meta_data.yaml', 'w') as f:
         yaml.dump(meta_data, f, default_flow_style=False)
