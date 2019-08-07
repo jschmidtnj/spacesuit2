@@ -4,19 +4,24 @@
  * IMU sensor on ROS network
  */
 #include <Arduino.h>
-#include "ping.h"
-#include "Adafruit_LSM9DS1.h"
-#include "Adafruit_Sensor.h"
 #include "ros.h"
 #include "std_msgs/Empty.h"
 #include "sensor_msgs/Imu.h"
 #include "std_msgs/Float64.h"
 #include "std_msgs/String.h"
-#include "WiFi.h"
 #include "geometry_msgs/Quaternion.h"
 #include "geometry_msgs/Vector3.h"
+#include "Adafruit_LSM9DS1.h"
+#include "Adafruit_Sensor.h"
+#include "WiFi.h"
+#include "ping.h"
 #include "stdio.h"
+#include "covariance.h"
+#include "deque"
+#include "vector"
 #include "config.h"
+
+using namespace std;
 
 #define DBG_OUTPUT_PORT Serial
 #define debug_mode true
@@ -26,6 +31,7 @@
 #define chatdata "test123"
 #define PUB_RATE 50  // Hz
 #define BLINK_RATE 1 // Hz
+#define HISTORY_SIZE 10 // covariance history
 IPAddress rosIPAddress = IPAddress(rosipints);
 
 static unsigned long lastBlink = 0;
@@ -37,11 +43,17 @@ unsigned long lastTrigger = 0;
 
 sensor_msgs::Imu imuMessage;
 geometry_msgs::Quaternion orientation;
-std_msgs::Float64 orientationCovarience[9];
-geometry_msgs::Vector3 angularAccel;
-std_msgs::Float64 angularAccelCovarience[9];
+vector<float> orientationCovarience(9);
+vector<float> orientationVector(3);
+deque<vector<float> > orientationHistory(HISTORY_SIZE);
+geometry_msgs::Vector3 angularVelocity;
+vector<float> angularVelocityCovarience(9);
+vector<float> angularVelocityVector(3);
+deque<vector<float> > angularVelocityHistory(HISTORY_SIZE);
 geometry_msgs::Vector3 linearAccel;
-std_msgs::Float64 linearAccelCovarience[9];
+vector<float> linearAccelCovarience(9);
+vector<float> linearAccelVector(3);
+deque<vector<float> > linearAccelHistory(HISTORY_SIZE);
 ros::Publisher imuPublisher(imuTopic, &imuMessage);
 std_msgs::String chat_msg;
 ros::Publisher chatter(chatTopic, &chat_msg);
@@ -142,22 +154,10 @@ void setupIMU()
     while (1)
       delay(500);
   }
-  else
-  {
-    IMU.setupAccel(IMU.LSM9DS1_ACCELRANGE_2G);
-    IMU.setupMag(IMU.LSM9DS1_MAGGAIN_4GAUSS);
-    IMU.setupGyro(IMU.LSM9DS1_GYROSCALE_245DPS);
-    imuMessage.header.frame_id = imuTopic;
-    imuMessage.linear_acceleration = linearAccel;
-    imuMessage.orientation = orientation;
-    imuMessage.angular_velocity = angularAccel;
-    for (int i = 0; i < 9; i++)
-    {
-      linearAccelCovarience[i].data = 0.0;
-      angularAccelCovarience[i].data = 0.0;
-      orientationCovarience[i].data = 0.0;
-    }
-  }
+  IMU.setupAccel(IMU.LSM9DS1_ACCELRANGE_2G);
+  IMU.setupMag(IMU.LSM9DS1_MAGGAIN_4GAUSS);
+  IMU.setupGyro(IMU.LSM9DS1_GYROSCALE_245DPS);
+  imuMessage.header.frame_id = imuTopic;
 }
 
 void setup()
@@ -183,18 +183,41 @@ void getIMUData()
   sensors_event_t a, m, g, temp;
   IMU.getEvent(&a, &m, &g, &temp);
   imuMessage.header.stamp = current_time;
-  // DBG_OUTPUT_PORT.println(a.acceleration.x);
   //update data
   linearAccel.x = a.acceleration.x;
   linearAccel.y = a.acceleration.y;
   linearAccel.z = a.acceleration.z;
-  angularAccel.x = g.acceleration.x;
-  angularAccel.y = g.acceleration.y;
-  angularAccel.z = g.acceleration.z;
+  linearAccelVector[0] = linearAccel.x;
+  linearAccelVector[1] = linearAccel.y;
+  linearAccelVector[2] = linearAccel.z;
+  angularVelocity.x = g.acceleration.x;
+  angularVelocity.y = g.acceleration.y;
+  angularVelocity.z = g.acceleration.z;
+  angularVelocityVector[0] = linearAccel.x;
+  angularVelocityVector[1] = linearAccel.y;
+  angularVelocityVector[2] = linearAccel.z;
   orientation.w = a.orientation.heading; // fix this
   orientation.x = a.orientation.x;
   orientation.y = a.orientation.y;
   orientation.z = a.orientation.z;
+  orientationVector[0] = orientation.x;
+  orientationVector[1] = orientation.y;
+  orientationVector[2] = orientation.z;
+  linearAccelHistory.push_front(linearAccelVector);
+  angularVelocityHistory.push_front(angularVelocityVector);
+  orientationHistory.push_front(orientationVector);
+  linearAccelCovarience = covariance(linearAccelHistory);
+  angularVelocityCovarience = covariance(angularVelocityHistory);
+  orientationCovarience = covariance(orientationHistory);
+  imuMessage.linear_acceleration = linearAccel;
+  imuMessage.orientation = orientation;
+  imuMessage.angular_velocity = angularVelocity;
+  for (unsigned int i = 0; i < linearAccelCovarience.size(); i++)
+  {
+    imuMessage.linear_acceleration_covariance[i] = linearAccelCovarience[i];
+    imuMessage.angular_velocity_covariance[i] = angularVelocityCovarience[i];
+    imuMessage.orientation_covariance[i] = orientationCovarience[i];
+  }
 }
 
 void loop()

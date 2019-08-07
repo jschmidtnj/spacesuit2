@@ -17,10 +17,12 @@
 #include "WiFi.h"
 #include "ping.h"
 #include "stdio.h"
-#include "deque.h"
-#include "vector.h"
 #include "covariance.h"
+#include "deque"
+#include "vector"
 #include "config.h"
+
+using namespace std;
 
 #define DBG_OUTPUT_PORT Serial
 #define debug_mode true
@@ -42,15 +44,15 @@ unsigned long lastTrigger = 0;
 
 sensor_msgs::Imu imuMessage;
 geometry_msgs::Quaternion orientation;
-std_msgs::Float64 orientationCovarience[9];
+vector<float> orientationCovarience(9);
 vector<float> orientationVector(3);
 deque<vector<float> > orientationHistory(HISTORY_SIZE);
 geometry_msgs::Vector3 angularVelocity;
-std_msgs::Float64 angularVelocityCovarience[9];
+vector<float> angularVelocityCovarience(9);
 vector<float> angularVelocityVector(3);
 deque<vector<float> > angularVelocityHistory(HISTORY_SIZE);
 geometry_msgs::Vector3 linearAccel;
-std_msgs::Float64 linearAccelCovarience[9];
+vector<float> linearAccelCovarience(9);
 vector<float> linearAccelVector(3);
 deque<vector<float> > linearAccelHistory(HISTORY_SIZE);
 ros::Publisher imuPublisher(imuTopic, &imuMessage);
@@ -170,43 +172,31 @@ void setup()
   }
 }
 
-float mean(Queue arr[], int n)
-{
-  float sum = 0;
-  for(int i = 0; i < n; i++)
-    sum = sum + arr[i];
-  return sum / n;
-}
-
-// Function to find covariance.
-float covariance(Queue<float[3][3]> q1, float arr2[], int index, int count)
-{
-  float sum = 0;
-  for(int i = 0; i < n; i++)
-    sum = sum + (arr1[i] - mean(arr1, count)) *
-                (arr2[i] - mean(arr2, count));
-  return sum / (count - 1);
-}
-
 void getIMUData()
 {
   // sensors_event_t event; 
   // IMU.getEvent(&event);
   imu::Quaternion orientation_quat = IMU.getQuat();
-  imu::Vector<3> linear_accel_vector = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
-  imu::Vector<3> angular_velocity_vector = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+  imu::Vector<3> linear_accel_vector = IMU.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+  imu::Vector<3> angular_velocity_vector = IMU.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
   imuMessage.header.stamp = current_time;
   //update data
   linearAccel.x = linear_accel_vector.x();
   linearAccel.y = linear_accel_vector.y();
   linearAccel.z = linear_accel_vector.z();
+  linearAccelVector[0] = linearAccel.x;
+  linearAccelVector[1] = linearAccel.y;
+  linearAccelVector[2] = linearAccel.z;
   angularVelocity.x = angular_velocity_vector.x();
   angularVelocity.y = angular_velocity_vector.y();
   angularVelocity.z = angular_velocity_vector.z();
-  orientation.w = quat.w();
-  orientation.x = quat.x();
-  orientation.y = quat.y();
-  orientation.z = quat.z();
+  angularVelocityVector[0] = linearAccel.x;
+  angularVelocityVector[1] = linearAccel.y;
+  angularVelocityVector[2] = linearAccel.z;
+  orientation.w = orientation_quat.w();
+  orientation.x = orientation_quat.x();
+  orientation.y = orientation_quat.y();
+  orientation.z = orientation_quat.z();
   orientationVector[0] = orientation.x;
   orientationVector[1] = orientation.y;
   orientationVector[2] = orientation.z;
@@ -219,9 +209,12 @@ void getIMUData()
   imuMessage.linear_acceleration = linearAccel;
   imuMessage.orientation = orientation;
   imuMessage.angular_velocity = angularVelocity;
-  imuMessage.covariance_linear_acceleration = linearAccelCovarience;
-  imuMessage.covariance_angular_velocity = angularVelocityCovarience;
-  imuMessage.covariance_orientation = orientationCovarience;
+  for (unsigned int i = 0; i < linearAccelCovarience.size(); i++)
+  {
+    imuMessage.linear_acceleration_covariance[i] = linearAccelCovarience[i];
+    imuMessage.angular_velocity_covariance[i] = angularVelocityCovarience[i];
+    imuMessage.orientation_covariance[i] = orientationCovarience[i];
+  }
 }
 
 void loop()
