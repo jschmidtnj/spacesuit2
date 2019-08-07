@@ -136,7 +136,7 @@ static err_t ping_send(int s, ip4_addr_t *addr, int size) {
 
 	to.sin_len = sizeof(to);
 	to.sin_family = AF_INET;
-	inet_addr_from_ipaddr(&to.sin_addr, addr);
+	inet_addr_from_ip4addr(&to.sin_addr, addr);
 
 	if ((err = sendto(s, iecho, ping_size, 0, (struct sockaddr*)&to, sizeof(to)))) {
 		transmitted++;
@@ -169,7 +169,7 @@ static void ping_recv(int s) {
 
 			/// Get from IP address
 			ip4_addr_t fromaddr;
-			inet_addr_to_ipaddr(&fromaddr, &from.sin_addr);
+			inet_addr_to_ip4addr(&fromaddr, &from.sin_addr);
 
 			strcpy(ipa, inet_ntoa(fromaddr));
 
@@ -230,7 +230,7 @@ static void stop_action(int i) {
 
 	stopped = 1;
 }
-+/
+*/
 /*
 * Operation functions
 *
@@ -331,15 +331,17 @@ bool ping_start(IPAddress adr, int count=0, int interval=0, int size=0, int time
 	);
 
 	if (received) {
-		ping_resp pingresp;
 		log_i("round-trip min/avg/max/stddev = %.3f/%.3f/%.3f/%.3f ms\r\n", min_time, mean_time, max_time, sqrt(var_time / received));
+		/*
+		ping_resp pingresp;
 		pingresp.total_count = 10;
 		pingresp.timeout_count = 10;
 		pingresp.total_bytes = 1;
 		pingresp.total_time = mean_time;
 		pingresp.ping_err = 0;
+		*/
 		return true;
-	//	ping_o->sent_function(ping_o, (uint8*)&pingresp);
+		// ping_o->sent_function(ping_o, (uint8*)&pingresp);
 	}
 	return false;
 }
