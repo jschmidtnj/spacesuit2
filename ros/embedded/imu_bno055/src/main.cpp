@@ -30,9 +30,9 @@ using namespace std;
 #define imuTopic "imu"
 #define chatTopic "chatter"
 #define chatdata "test123"
-#define PUB_RATE 50  // Hz
+#define PUB_RATE 5  // Hz
 #define BLINK_RATE 1 // Hz
-#define HISTORY_SIZE 10 // covariance history
+unsigned int HISTORY_SIZE = 10; // covariance history
 IPAddress rosIPAddress = IPAddress(rosipints);
 
 static unsigned long lastBlink = 0;
@@ -46,15 +46,15 @@ sensor_msgs::Imu imuMessage;
 geometry_msgs::Quaternion orientation;
 vector<float> orientationCovarience(9);
 vector<float> orientationVector(3);
-deque<vector<float> > orientationHistory(HISTORY_SIZE);
+deque<vector<float> > orientationHistory(HISTORY_SIZE, orientationVector);
 geometry_msgs::Vector3 angularVelocity;
 vector<float> angularVelocityCovarience(9);
 vector<float> angularVelocityVector(3);
-deque<vector<float> > angularVelocityHistory(HISTORY_SIZE);
+deque<vector<float> > angularVelocityHistory(HISTORY_SIZE, angularVelocityVector);
 geometry_msgs::Vector3 linearAccel;
 vector<float> linearAccelCovarience(9);
 vector<float> linearAccelVector(3);
-deque<vector<float> > linearAccelHistory(HISTORY_SIZE);
+deque<vector<float> > linearAccelHistory(HISTORY_SIZE, linearAccelVector);
 ros::Publisher imuPublisher(imuTopic, &imuMessage);
 std_msgs::String chat_msg;
 ros::Publisher chatter(chatTopic, &chat_msg);
@@ -202,8 +202,14 @@ void getIMUData()
   orientationVector[1] = orientation_vector.y();
   orientationVector[2] = orientation_vector.z();
   linearAccelHistory.push_front(linearAccelVector);
+  if (linearAccelHistory.size() > HISTORY_SIZE)
+    linearAccelHistory.resize(HISTORY_SIZE);
   angularVelocityHistory.push_front(angularVelocityVector);
+  if (angularVelocityHistory.size() > HISTORY_SIZE)
+    angularVelocityHistory.resize(HISTORY_SIZE);
   orientationHistory.push_front(orientationVector);
+  if (orientationHistory.size() > HISTORY_SIZE)
+    orientationHistory.resize(HISTORY_SIZE);
   linearAccelCovarience = covariance(linearAccelHistory);
   angularVelocityCovarience = covariance(angularVelocityHistory);
   orientationCovarience = covariance(orientationHistory);

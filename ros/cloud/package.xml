@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package>
-  <name>space_suit</name>
+  <name>space_suit_cloud</name>
   <version>0.0.1</version>
   <description>
-    Space Suit ros control
+    Space Suit ros cloud
   </description>
   <author email="jschmidtnj@gmail.com">Joshua Schmidt</author>
   <maintainer email="jschmidtnj@gmail.com">Joshua Schmidt</maintainer>

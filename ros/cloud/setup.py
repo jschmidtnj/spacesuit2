@@ -8,7 +8,7 @@ def read(fname):
 
 # fetch values from package.xml
 setup_args = generate_distutils_setup(
-    packages=[],
+    packages=['spacesuit_data_collector', 'spacesuit_data_storage'],
     package_dir={'': 'src'},
     platforms=['ROS'],
     long_description=read('../../docs/description.md')

@@ -2,5 +2,4 @@
 .pio
 .pioenvs
 .piolibdeps
-.vscode/
 include/config.h

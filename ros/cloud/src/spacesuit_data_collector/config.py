@@ -1,0 +1,17 @@
+#!/usr/bin/env/ python
+
+from sensor_msgs.msg import Imu
+
+# node name
+node_name="spacesuit_data_collector"
+
+# IMU
+imu_sensor_name = "imu"
+
+imu_data_topic = {'topic': 'imu',
+                  'name': imu_sensor_name,  'type': Imu}
+
+# List of all topics:
+topics_list = [
+    imu_data_topic,
+]
