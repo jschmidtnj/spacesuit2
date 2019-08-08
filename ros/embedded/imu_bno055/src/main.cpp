@@ -177,6 +177,7 @@ void getIMUData()
   // sensors_event_t event; 
   // IMU.getEvent(&event);
   imu::Quaternion orientation_quat = IMU.getQuat();
+  imu::Vector<3> orientation_vector = IMU.getVector(Adafruit_BNO055::VECTOR_EULER);
   imu::Vector<3> linear_accel_vector = IMU.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
   imu::Vector<3> angular_velocity_vector = IMU.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
   imuMessage.header.stamp = current_time;
@@ -197,9 +198,9 @@ void getIMUData()
   orientation.x = orientation_quat.x();
   orientation.y = orientation_quat.y();
   orientation.z = orientation_quat.z();
-  orientationVector[0] = orientation.x;
-  orientationVector[1] = orientation.y;
-  orientationVector[2] = orientation.z;
+  orientationVector[0] = orientation_vector.x();
+  orientationVector[1] = orientation_vector.y();
+  orientationVector[2] = orientation_vector.z();
   linearAccelHistory.push_front(linearAccelVector);
   angularVelocityHistory.push_front(angularVelocityVector);
   orientationHistory.push_front(orientationVector);
