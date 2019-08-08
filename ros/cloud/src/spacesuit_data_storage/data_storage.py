@@ -10,7 +10,7 @@ import core
 
 def main():
     rospy.init_node(config.node_name)
-    dc = core.DataCollector()
+    ds = core.DataStorage()
     # Store data (see core.py)
     rospy.loginfo('Data Storage: Starting Data Storage')
     rospy.spin()

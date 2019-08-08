@@ -1,4 +1,4 @@
-#!/usr/bin/env/ python
+#!/usr/bin/env python3
 
 """
 subscribe to sensor topics and get data for remote storage
@@ -10,7 +10,7 @@ import message_filters
 from pymongo import MongoClient
 
 
-class DataCollector(object):
+class DataStorage(object):
 
     def __init__(self):
         connection_uri = rospy.get_param('~connection_uri')

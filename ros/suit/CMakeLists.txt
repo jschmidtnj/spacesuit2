@@ -2,7 +2,7 @@
 # CMake
 ################################################################################
 cmake_minimum_required(VERSION 2.8.3)
-project(space_suit)
+project(spacesuit)
 
 ################################################################################
 # Packages
@@ -15,7 +15,6 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
 )
 find_package(PkgConfig)
-pkg_check_modules(csm REQUIRED csm)
 # Run catkin Python setup
 catkin_python_setup()
 ################################################################################
@@ -30,13 +29,13 @@ catkin_python_setup()
 # Catkin specific configuration
 ################################################################################
 catkin_package(
-  CATKIN_DEPENDS rospy std_msgs geometry_msgs geometry_msgs sensor_msgs
+  CATKIN_DEPENDS roscpp rospy std_msgs geometry_msgs geometry_msgs sensor_msgs
 )
 
 add_compile_options(-std=c++11)
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-target_link_libraries(${catkin_LIBRARIES})
+# target_link_libraries(${catkin_LIBRARIES})
 add_dependencies(${catkin_EXPORTED_TARGETS})
 
 ################################################################################

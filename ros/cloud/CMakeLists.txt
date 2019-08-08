@@ -15,7 +15,6 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
 )
 find_package(PkgConfig)
-pkg_check_modules(csm REQUIRED csm)
 # Run catkin Python setup
 catkin_python_setup()
 
@@ -37,14 +36,11 @@ catkin_package(
 add_compile_options(-std=c++11)
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-target_link_libraries(${catkin_LIBRARIES})
+# target_link_libraries(${catkin_LIBRARIES})
 add_dependencies(${catkin_EXPORTED_TARGETS})
 ################################################################################
 # Build
 ################################################################################
-
-add_custom_target(maps ALL COMMAND make
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/maps)
 
 ################################################################################
 # Install
@@ -56,6 +52,9 @@ catkin_install_python(PROGRAMS bin/spacesuit_data_collector
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY launch
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(DIRECTORY params
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 install(DIRECTORY scripts

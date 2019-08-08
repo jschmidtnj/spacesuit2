@@ -1,4 +1,4 @@
-#!/usr/bin/env/ python
+#!/usr/bin/env python3
 
 """
 subscribe to sensor topics and get data for local storage
