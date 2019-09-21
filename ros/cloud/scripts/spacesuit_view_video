@@ -1,0 +1,21 @@
+#!/bin/bash
+
+UDP_PORT=$1
+REMOTE_IP=$2
+REMOTE_UDP_PORT=$3
+
+if [ -z "$UDP_PORT" ]; then
+    UDP_PORT=5000
+fi
+
+if [ -z "$REMOTE_UDP_PORT" ]; then
+    REMOTE_UDP_PORT=$UDP_PORT
+fi
+
+if [ -z "$REMOTE_IP" ]; then
+    # remote IP address is not specified, use non-tee pipeline
+    gst-launch-1.0 udpsrc port="$UDP_PORT" ! "application/x-rtp" ! rtph264depay ! avdec_h264 ! queue leaky=2 max-size-buffers=1 ! xvimagesink
+else
+    # we have remote IP specified, so use the pipeline with tee
+    gst-launch-1.0 udpsrc port="$UDP_PORT" ! "application/x-rtp" ! tee name=pkt ! queue ! udpsink host="$REMOTE_IP" port="$REMOTE_UDP_PORT" pkt. ! queue ! rtph264depay ! avdec_h264 ! queue leaky=2 max-size-buffers=1 ! xvimagesink sync=false
+fi

@@ -1,0 +1,60 @@
+#!/bin/bash
+
+VIDEO_DEV=$1
+REMOTE_IP=$2
+UDP_PORT=$3
+VIDEO_PROFILE=$4
+
+function print_usage() {
+    echo "spacesuit_start_video <video_dev> <remote_ip> [<udp_port>]"
+}
+
+if [ -z "$VIDEO_DEV" ]; then
+    echo "video device not specified"
+    print_usage
+    exit 1
+fi
+
+if [ ! -e "$VIDEO_DEV" ]; then
+    echo "$VIDEO_DEV does not exist"
+    print_usage
+    exit 2
+fi
+
+if [ -z "$REMOTE_IP" ]; then
+    echo "remote IP not specified"
+    print_usage
+    exit 3
+fi
+
+if [ -z "$UDP_PORT" ]; then
+    UDP_PORT=5000
+fi
+
+if [ -z "VIDEO_PROFILE" ]; then
+    VIDEO_PROFILE=0
+fi
+
+if [ $VIDEO_PROFILE -eq 0 ]; then
+    # 2M 720p@15fps
+    W=1280
+    H=720
+    FPS=15
+    RATE=2048
+elif [ $VIDEO_PROFILE -eq 1 ]; then
+    # 4M 720p@30fps
+    W=1280
+    H=720
+    FPS=30
+    RATE=4096
+elif [ $VIDEO_PROFILE -eq 2 ]; then
+    # 768k 360p@15fps
+    W=640
+    H=360
+    FPS=15
+    RATE=768
+else
+    echo "invalid video profile"
+    exit 4
+fi
+gst-launch-1.0 -v v4l2src device="$VIDEO_DEV" do-timestamp=true ! video/x-raw,width="$W",height="$H",framerate="$FPS"/1 ! queue leaky=2 max-size-buffers=1 ! vaapipostproc ! vaapih264enc bitrate="$RATE" rate-control=2 num-slices=4 max-bframes=0 keyframe-period=30 ! video/x-h264,profile=high ! rtph264pay mtu=1400 config-interval=-1 pt=96 ! udpsink host=$REMOTE_IP port=$UDP_PORT max-bitrate=15000000
