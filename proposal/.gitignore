@@ -1,3 +1,6 @@
+# ignore proposal folder
+proposal/
+
 # other stuff
 *.synctex.gz
 *.fls
