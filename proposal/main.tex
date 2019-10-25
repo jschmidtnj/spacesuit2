@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[american]{babel}
 \usepackage{csquotes}
+\usepackage{pdfpages}
 \usepackage{hyperref}
 \usepackage{color,soul}
 \usepackage[backend=biber,style=numeric,hyperref=true,natbib=true,autocite=plain,sorting=none]{biblatex}
@@ -59,6 +60,12 @@
 \end{figure}
 
 \newpage
+
+\newcommand{\contactsection}{}
+
+\includepdf[scale=1.0, offset=0 0, pages=1, pagecommand=\contactsection]{assets/contactinfo.pdf}
+
+\iffalse
 
 \begin{center}
 
@@ -150,6 +157,8 @@ Approved: & \hrulefill \\
 
 \end{center}
 
+\fi
+
 \newpage
 
 {\setstretch{1.0}
@@ -214,14 +223,14 @@ Mukundan Iyengar
 
 \subsection{Abstract}
 
-The goal of this project is to use innovative strategies and resources to aid astronauts in Extravehicular Activities (EVAs) as they navigate and complete tasks outside of the lunar landing module. To accomplish this, we will be using innovative technologies including Augmented Reality and network-connected sensors, in order to create intuitive displays of vitals and tasks, show navigation details, and allow astronauts to see in low visibility regions.
+The goal of this project is to use innovative strategies and resources to aid astronauts in Extravehicular Activities (EVAs) as they navigate and complete tasks outside of the lunar landing module. To accomplish this, we will be using emerging technologies including Augmented Reality and network-connected sensors, in order to create intuitive displays of vitals and tasks, show navigation details, and allow astronauts to see in low visibility areas.
 
-By employing a Microsoft Hololens \autocite{mrbasics} \autocite{mannedspaceflight} and a large data acquisition system, we plan to implement image processing and localization tools in order to augment an astronaut's environment, on command, and facilitate the astronaut's actions. Our implementation includes 9 key functions, detailed in the next section:
+By employing a Microsoft Hololens \autocite{mrbasics} \autocite{mannedspaceflight} and a large data acquisition system, we plan to implement image processing and localization tools in order to augment an astronaut's environment, making it easier for the astronaut to complete given tasks. Our implementation includes 9 key functions, detailed in the next section:
 
 \begin{enumerate}
 \item SLAM and Radiowave Tracking
 \item Eye Tracking Illumination
-\item Suit to Rover to ISS Interaction
+\item Suit to Rover to Ground Control Interaction
 \item The HUD and User-Interface
 \item Task-List Presentation
 \item Suit Control API
@@ -266,7 +275,7 @@ For better results, we decided to use an LED array on the suit to illuminate dar
 
 To summarize, our proposed solution consists of various light sources positioned strategically on the space suit, with differing focal lengths and brightness levels. Computer vision and image filtering is used to determine the dark areas of the astronaut's field of view, and tracking technology shown in Figure \ref{fig:hololenseyetracking} is used to deduce in what direction the astronaut is looking. Additionally, the localization data is used to determine exactly where the astronaut is looking relative to the lunar surface. With this information, our system will then intelligently light the astronaut's surroundings.
 
-\subsubsection{Suit to Rover to ISS interaction}
+\subsubsection{Suit to Rover to Ground Control interaction}
 
 High speed internet is something that is quite sparse on the lunar surface (coming soon \autocite{mooninternet}). Relaying information between the astronaut, the devices on the astronaut's suit, and the command module is essential to any EVA. In our solution, information will be flowing through two different highways from the suit to a router representing the lunar rover or lunar lander. The information flow is handled completely on the backend with no interaction needed by the astronaut.
 
@@ -360,7 +369,7 @@ The way back, inertial monitor, localization, and warning systems are our soluti
 
 Our plan with outreach is to spread the word about the opportunities that NASA provides, such as competitions like this as well as potential careers and opportunities at NASA. Moreover, we plan on emphasizing the opportunities that STEM offers and how students can get exposure early. We plan on targeting high school and middle school students who have interest in STEM or space and aeronautics specifically.
 
-There are three groups we currently plan on visiting; Bayonne High School in Bayonne, NJ, Hoboken High School in Hoboken, NJ and Raritan High School in Hazlet, NJ. As of now, we have two presentations confirmed at Raritan High School and Bayonne High School, and discussions with Hoboken High School are ongoing.
+There are three groups we currently plan on visiting; Bayonne High School in Bayonne, NJ, Hoboken High School in Hoboken, NJ and Raritan High School in Hazlet, NJ. As of now, we have two presentations confirmed at Raritan High School (letter in Appendix) and Bayonne High School, and discussions with Hoboken High School are ongoing.
 
 Our presentation will follow a straight-forward layout, uniquely created by our team. The presentation will follow the below outline:
 
@@ -420,7 +429,7 @@ John Cinquegrana: Computers and logistics have been my ambition for as long as I
 
 Joshua Schmidt: I have been involved in science and engineering for nearly my entire life. Since middle school in the gifted and talented program I have been programming and working with computer hardware, experimenting with OCR, networking, ML, and emerging technologies on various platforms. In high school I was captain of my First robotics team, working closely with the design and programming divisions to create amazing robots. Now in Stevens I am studying Computer Engineering with a minor in Computer Science. I do freelance work building web and native apps, and this past summer worked for Nokia Bell Labs developing their autonomous robot platform. I completed this challenge last year and went to Houston to present, and I had an amazing time talking with people who could be using our technology in the future. There was so much that we accomplished and even more that we could improve, which is why I am back again to take another shot at this challenge.
 
-Emily Weeks: As an Engineering Management student at Stevens Institute of Technology, I have had many opportunities in the STEM community. I have visited Kennedy Space Center in Cape Canaveral Florida where I observed a launch and participated in a tour. I have also visited the Smithsonian National Air \& Space Museum. Both experiences have opened my eyes to space exploration and the impact NASA has on our everyday life. From those experiences I began to dream of being an astronaut, which led me down the path of STEM throughout elementary and high school; eventually to Stevens Institute of Technology where I am now participating in this challenge. 
+Emily Weeks: As an Engineering Management student at Stevens Institute of Technology, I have had many opportunities in the STEM community. I have visited Kennedy Space Center in Cape Canaveral Florida where I observed a launch and participated in a tour. I have also visited the Smithsonian National Air \& Space Museum. Both experiences have opened my eyes to space exploration and the impact NASA has on our everyday life. From those experiences I began to dream of being an astronaut, which led me down the path of STEM throughout elementary and high school; eventually to Stevens Institute of Technology where I am now participating in this challenge.
 
 Dylan Regan: Ever since I was little, I've wanted to know how the world works. As a kid I spent hours just testing how water went up and down as I got in and out of the tub. I would keep finding something, and wondering about it until I got my answer. But space is a concept I never got my answer for. No matter how many Neil Degrasse Tyson videos I watched, I couldn't find the satisfaction I was looking for. I just kept having more questions. During a family visit to both The Kennedy Space Center and The Boeing Factory, I got to see just how much others share that same wonder of the world; I saw what they were doing and wanted to help as well. I am now currently studying computer science at Stevens Institute of Technology. I love any kind of puzzle or problem solving question. And while doing these problems, I often find a way that many others would overlook or miss at first. I am now hoping to use my unique way of thinking to tackle the NASA Suits Challenge.
 
@@ -461,9 +470,17 @@ We hope this presentation informs up-and-coming students of the great opportunit
 
 \newpage
 
+\newcommand{\adminendorsement}{
+
 \section{Administrative Section}
 
 \subsection{Institutional Letter of Endorsement}
+
+}
+
+\includepdf[scale=0.8, offset=0 -60, pages=1, pagecommand=\adminendorsement]{assets/administratorendorsement.pdf}
+
+\iffalse
 
 To whom it may concern:
 
@@ -475,9 +492,19 @@ Sincerely,
 
 Min Sing, Ph.D
 
+\fi
+
 \newpage
 
+\newcommand{\supervisorendorsement}{
+
 \subsection{Statement of Supervising Faculty}
+
+}
+
+\includepdf[scale=0.8, offset=0 -50, pages=1, pagecommand=\supervisorendorsement]{assets/facultyendorsement.pdf}
+
+\iffalse
 
 It is my great pleasure to endorse this team for the NASA S.U.I.T.S competition. Over the past 5 to 6 weeks they have been very diligent; meeting with me on a regular basis and setting up a schedule to meet multiple times a week on their own. They have been exceptional with their time management skills, working on their proposal and developing multiple pieces for this project. The amount of headway they have made in this short period is a true testament to their work ethic.  
 
@@ -487,9 +514,19 @@ Sincerely,
 
 Mukund Iyengar
 
+\fi
+
 \newpage
 
+\newcommand{\rightsofuse}{
+
 \subsection{Statement of Rights of Use}
+
+}
+
+\includepdf[scale=1.0, offset=0 0, pages=1, pagecommand=\rightsofuse]{assets/rightsofuse.pdf}
+
+\iffalse
 
 {\setstretch{0.5}
 As a team member for a proposal entitled “\maintitle” proposed by a team of higher education students from \schoolname, I will and hereby do grant the U.S. Government a royalty-free, nonexclusive and irrevocable license to use, reproduce, distribute (including distribution by transmission) to the public, perform publicly, prepare derivative works, and display publicly, any technical data contained in this proposal in whole or in part and in any manner for Federal purposes and to have or permit others to do so for Federal purposes only. Further, with respect to all computer software designated by NASA to be released as open source which is first produced or delivered under this proposal and subsequent collaboration, if selected, shall be delivered with unlimited and unrestricted rights so as to permit further distribution as open source. For purposes of defining the rights in such computer software, “computer software” shall include source codes, object codes, executables, ancillary files, and any and all documentation related to any computer program or similar set of instructions delivered in association with this collaboration. As a team member for a proposal entitled “\maintitle” proposed by a team of higher education students from \schoolname, I will and hereby do grant the U.S. Government a nontransferable, irrevocable, paid-up license to practice or have practiced for or on behalf of the United States Government any invention described or made part of this proposal throughout the world.
@@ -534,6 +571,8 @@ Approved: & \hrulefill \\
 Approved: & \hrulefill \\
 & Iyengar, Mukund, 10/25/2019\\
 \end{tabular}
+
+\fi
 
 \newpage
 
@@ -585,7 +624,19 @@ Estimated Number of Nights: 6
 
 \pagebreak
 
+\newcommand{\raritansection}{
+
 \section{Appendices}
+
+\subsection{Raritan Confirmation letter}
+
+This letter from Raritan High School in Hazlet, NJ, certifies the intent of our team to engage in an outreach program. As team member John Cinquegrana is an alumni of RHS he headed discussions with them. The RHS side of discussions was headed by Mr. Michael Miller (mmiller@hazlet.org) as described in the letter.
+
+}
+
+\includepdf[scale=0.68, offset=0 -70, pages=1, pagecommand=\raritansection]{assets/raritanacceptance.pdf}
+
+\subsection{Pictures and Diagrams}
 
 \begin{figure}[!htb]
   \centering

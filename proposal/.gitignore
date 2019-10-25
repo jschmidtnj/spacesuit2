@@ -125,3 +125,6 @@ venv.bak/
 *.tex.bbl
 *.tex.blg
 *.toc
+
+# include pdfs in assets
+!assets/*.pdf
