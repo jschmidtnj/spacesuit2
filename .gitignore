@@ -1,3 +1,4 @@
 # common gitignore
 .vscode/
 *.swp
+*.code-workspace
