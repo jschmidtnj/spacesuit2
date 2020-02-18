@@ -1,0 +1,2 @@
+In this folder are all the resources/files needed in order to display and update
+the User Interface of the Hololens.

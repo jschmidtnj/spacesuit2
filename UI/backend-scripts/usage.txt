@@ -1,0 +1,2 @@
+In the /backend-scripts file are all the that are going to be used by the
+UI to access the ROS and web server.
