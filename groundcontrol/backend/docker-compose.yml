@@ -1,0 +1,24 @@
+version: '3'
+services:
+  api:
+    image: suits-api
+    env_file:
+      - .env
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+      - s3
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+  s3:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./storage:/data
+    env_file:
+      - .minio.env
+    command: server /data
