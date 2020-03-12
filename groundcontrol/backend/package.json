@@ -42,6 +42,7 @@
     "graphql": "^14.6.0",
     "graphql-depth-limit": "^1.1.0",
     "graphql-tools": "^4.0.7",
+    "graphql-upload": "^10.0.0",
     "mongodb": "^3.5.4"
   },
   "devDependencies": {

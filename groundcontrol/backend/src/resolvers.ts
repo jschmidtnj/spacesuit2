@@ -1,71 +1,36 @@
 import { IResolvers } from 'graphql-tools';
 import connectDB from './db';
-import { taskCollection } from './vars';
-
-interface ITask {
-  ID?: string;
-  title?: string;
-  description?: string;
-  files?: [string];
-  subtasks?: [string];
-  parentTask?: string;
-}
-
-interface IOutput {
-  code: number;
-  message: string;
-}
+import fileMutations from './files/mutations';
+import fileQueries from './files/queries';
+import missionMutations from './missions/mutations';
+import missionQueries from './missions/queries';
+import noteMutations from './notes/mutations';
+import noteQueries from './notes/queries';
+import taskMutations from './tasks/mutations';
+import tasksQueries from './tasks/queries';
 
 const createResolvers = async (): Promise<IResolvers<any, any>> => {
-  return new Promise<IResolvers<any, any>>((resDB, rejDB) => {
+  return new Promise<IResolvers<any, any>>((resolve, reject) => {
     connectDB()
       .then(db => {
-        console.log(db.databaseName);
         const resolvers: IResolvers = {
           Mutation: {
-            async addTask(_, args: any): Promise<IOutput> {
-              const newTask: ITask = {
-                description: args.description,
-                files: args.files,
-                subtasks: args.subtasks,
-                title: args.title,
-              };
-              return new Promise<IOutput>((resolve, reject) => {
-                db.collection(taskCollection)
-                  .insertOne(newTask)
-                  .then(result => {
-                    newTask.ID = result.insertedId;
-                    if (!newTask.ID) {
-                      reject({
-                        code: 500,
-                        message: 'no new task id found',
-                      });
-                      return
-                    }
-                    resolve({
-                      code: 200,
-                      message: newTask.ID,
-                    });
-                  })
-                  .catch(err => {
-                    reject({
-                      code: 500,
-                      message: err.message,
-                    });
-                  });
-              });
-            },
+            ...fileMutations(db),
+            ...missionMutations(db),
+            ...noteMutations(db),
+            ...taskMutations(db),
           },
           Query: {
-            hello(): string {
-              return `Hello world! 🚀`;
-            },
+            ...fileQueries(db),
+            ...missionQueries(db),
+            ...noteQueries(db),
+            ...tasksQueries(db),
           },
         };
-        resDB(resolvers);
+        resolve(resolvers);
       })
       .catch(err => {
-        rejDB(err);
+        reject(err);
       });
   });
 };
