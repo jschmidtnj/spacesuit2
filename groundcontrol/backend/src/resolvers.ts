@@ -8,6 +8,8 @@ import noteMutations from './notes/mutations';
 import noteQueries from './notes/queries';
 import taskMutations from './tasks/mutations';
 import tasksQueries from './tasks/queries';
+import suitMutations from './suits/mutations';
+import suitQueries from './suits/queries';
 
 const createResolvers = async (): Promise<IResolvers<any, any>> => {
   return new Promise<IResolvers<any, any>>((resolve, reject) => {
@@ -19,12 +21,17 @@ const createResolvers = async (): Promise<IResolvers<any, any>> => {
             ...missionMutations(db),
             ...noteMutations(db),
             ...taskMutations(db),
+            ...suitMutations(db),
           },
           Query: {
+            hello(): string {
+              return `Hello world! 🚀`;
+            },
             ...fileQueries(db),
             ...missionQueries(db),
             ...noteQueries(db),
             ...tasksQueries(db),
+            ...suitQueries(db),
           },
         };
         resolve(resolvers);

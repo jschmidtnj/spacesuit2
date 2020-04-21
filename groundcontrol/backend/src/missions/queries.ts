@@ -5,9 +5,6 @@ import IMission from './type';
 
 export default (db: Db) => {
   return {
-    hello(): string {
-      return `Hello world! 🚀`;
-    },
     async mission(_: any, args: any): Promise<IMission> {
       return new Promise<IMission>((resolve, reject) => {
         if (!ObjectID.isValid(args.id)) {
